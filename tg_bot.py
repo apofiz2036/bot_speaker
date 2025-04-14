@@ -36,7 +36,7 @@ def get_dialogflow_response(text, session_id, project_id):
         request={"session": session, "query_input": query_input}
     )
 
-    return response.query_result.fulfillment_text    
+    return response.query_result.fulfillment_text
 
 
 def handle_message(update: Update, context: CallbackContext) -> None:
