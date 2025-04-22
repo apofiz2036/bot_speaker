@@ -53,8 +53,7 @@ def get_dialogflow_response(text, session_id, project_id):
 def handle_message(update: Update, context: CallbackContext) -> None:
     try:
         user_text = update.message.text
-        user_id = str(update.message.from_user.id)
-
+        user_id = f"tg_{update.message.from_user.id}"
         project_id = context.bot_data.get('project_id')
         bot_response = get_dialogflow_response(user_text, user_id, project_id)
         update.message.reply_text(bot_response)
@@ -66,9 +65,9 @@ def handle_message(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     load_dotenv()
-    TELEGRAM_BOT_TOKEN = os.environ['TELEGRAM_TOKEN']
-    PROJECT_ID = os.environ['DIALOGFLOW_PROJECT_ID']
-    TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
+    telegram_bot_token = os.environ['TELEGRAM_TOKEN']
+    project_id = os.environ['DIALOGFLOW_PROJECT_ID']
+    telegram_chat_id = os.environ.get('TELEGRAM_CHAT_ID')
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.WARNING)
@@ -77,13 +76,13 @@ def main() -> None:
     file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     logger.addHandler(file_handler)
 
-    updater = Updater(TELEGRAM_BOT_TOKEN)
+    updater = Updater(telegram_bot_token)
     dispatcher = updater.dispatcher
 
-    telegram_handler = TelegramLogsHandler(updater.bot, TELEGRAM_CHAT_ID)
+    telegram_handler = TelegramLogsHandler(updater.bot, telegram_chat_id)
     telegram_handler.setLevel(logging.ERROR)
     logger.addHandler(telegram_handler)
-    dispatcher.bot_data['project_id'] = PROJECT_ID
+    dispatcher.bot_data['project_id'] = project_id
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))

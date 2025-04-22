@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 import os
 
 from google.cloud import dialogflow
@@ -25,11 +24,9 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
         messages=[message]
     )
 
-    response = intents_client.create_intent(
+    return intents_client.create_intent(
         request={"parent": parent, "intent": intent}
     )
-
-    print("Intent created: {}".format(response))
 
 
 def main():
@@ -41,15 +38,16 @@ def main():
     with open(file_name, "r", encoding='utf-8') as file:
         questions = json.load(file)
 
-    PROJECT_ID = os.environ['DIALOGFLOW_PROJECT_ID']
+    project_id = os.environ['DIALOGFLOW_PROJECT_ID']
 
     for intent_name, intent_data in questions.items():
-        create_intent(
-            project_id=PROJECT_ID,
+        response = create_intent(
+            project_id=project_id,
             display_name=intent_name,
             training_phrases_parts=intent_data['questions'],
             message_texts=intent_data['answer']
         )
+        print("Intent created: {}".format(response))
 
 
 if __name__ == '__main__':

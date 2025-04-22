@@ -26,7 +26,7 @@ def get_dialogflow_response(session_id, text, project_id):
 
 def send_response(event, api, PROJECT_ID):
     dialogflow_response = get_dialogflow_response(
-        session_id=str(event.user_id),
+        session_id=f"vk_{event.user_id}",
         text=event.text,
         project_id=PROJECT_ID
     )
@@ -41,16 +41,16 @@ def send_response(event, api, PROJECT_ID):
 
 def main():
     load_dotenv()
-    VK_BOT_TOKEN = os.environ['VK_TOKEN']
-    PROJECT_ID = os.environ['DIALOGFLOW_PROJECT_ID']
+    vk_bot_token = os.environ['VK_TOKEN']
+    project_id = os.environ['DIALOGFLOW_PROJECT_ID']
 
-    vk_session = vk_api.VkApi(token=VK_BOT_TOKEN)
+    vk_session = vk_api.VkApi(token=vk_bot_token)
     api = vk_session.get_api()
     longpoll = VkLongPoll(vk_session)
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            send_response(event, api, PROJECT_ID)
+            send_response(event, api, project_id)
 
 
 if __name__ == '__main__':
